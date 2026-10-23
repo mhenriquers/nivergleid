@@ -9,6 +9,7 @@
   let fotos = [];
   let timers = [];
   let quadroPendente = 0;
+  let area = null; // grade e tamanho máximo de foto calculados para a tela atual
 
   function iniciar(secao) {
     const A = C.ABERTURA;
@@ -43,6 +44,7 @@
     const foto = {
       celula,
       lugar: indice,
+      proporcao: C.FOTOS.PROPORCAO_PADRAO,
       giro: (indice % 2 ? -1 : 1) * U.aleatorio(A.ROTACAO_MIN_GRAUS, A.ROTACAO_MAX_GRAUS),
       desvioX: U.aleatorio(-A.DESVIO_MAX, A.DESVIO_MAX),
       desvioY: U.aleatorio(-A.DESVIO_MAX, A.DESVIO_MAX),
@@ -72,6 +74,9 @@
       descartar(foto);
       return;
     }
+    // O navegador já devolve o tamanho com a orientação da foto aplicada (deitada ou em pé).
+    foto.proporcao = imagem.naturalWidth / imagem.naturalHeight;
+    posicionar(foto);
     const marcarPronta = () => {
       foto.pronta = true;
       mostrarSePuder(foto);
@@ -99,37 +104,61 @@
     foto.celula.classList.add('mural__celula--vazia');
   }
 
-  // Divide a área em regiões (uma por foto) e põe cada foto perto do centro da sua,
-  // com desvio e um pouco maior que a região, para formar uma colagem que cobre a tela toda.
+  // Divide a área em regiões (uma por foto); cada foto fica perto do centro da sua,
+  // maior que a região, formando uma colagem que cobre a tela toda.
   function distribuir() {
     quadroPendente = 0;
     if (!mural || !fotos.length) return;
-    const A = C.ABERTURA;
+    const estilo = window.getComputedStyle(document.documentElement);
+    const borda = {
+      lado: parseFloat(estilo.getPropertyValue('--foto-borda')) || 0,
+      base: parseFloat(estilo.getPropertyValue('--foto-borda-base')) || 0
+    };
     const largura = mural.clientWidth;
     const altura = mural.clientHeight;
-    const grade = U.melhorGrade(fotos.length, largura, altura, C.FOTOS.PROPORCAO_MOLDURA);
-    const larguraFoto = grade.largura * A.ESCALA_FOTO;
-    const alturaFoto = grade.altura * A.ESCALA_FOTO;
-    const regiaoX = largura / grade.colunas;
-    const regiaoY = altura / grade.linhas;
-    mural.style.setProperty('--foto-largura', larguraFoto + 'px');
-    mural.style.setProperty('--foto-altura', alturaFoto + 'px');
+    const grade = U.melhorGrade(fotos.length, largura, altura, proporcaoDaMoldura(C.FOTOS.PROPORCAO_PADRAO, borda));
+    area = {
+      largura,
+      altura,
+      borda,
+      grade,
+      caixaX: grade.largura * C.ABERTURA.ESCALA_FOTO,
+      caixaY: grade.altura * C.ABERTURA.ESCALA_FOTO
+    };
+    fotos.forEach(posicionar);
+  }
 
-    fotos.forEach((foto) => {
-      const linha = Math.floor(foto.lugar / grade.colunas);
-      const coluna = foto.lugar % grade.colunas;
-      // Última linha incompleta fica centralizada, sem deixar um canto vazio.
-      const naLinha = Math.min(grade.colunas, fotos.length - linha * grade.colunas);
-      const recuo = ((grade.colunas - naLinha) * regiaoX) / 2;
-      const centroX = recuo + (coluna + 1 / 2 + foto.desvioX) * regiaoX;
-      const centroY = (linha + 1 / 2 + foto.desvioY) * regiaoY;
-      // A foto girada inteira fica dentro da área.
-      const caixa = U.caixaGirada(larguraFoto, alturaFoto, foto.giro);
-      const x = U.limitar(centroX, caixa.largura / 2, largura - caixa.largura / 2);
-      const y = U.limitar(centroY, caixa.altura / 2, altura - caixa.altura / 2);
-      foto.celula.style.left = x - larguraFoto / 2 + 'px';
-      foto.celula.style.top = y - alturaFoto / 2 + 'px';
-    });
+  // A borda branca é mais grossa embaixo; a moldura soma a foto e as bordas.
+  function proporcaoDaMoldura(proporcaoFoto, borda) {
+    return 1 / ((1 - 2 * borda.lado) / proporcaoFoto + borda.lado + borda.base);
+  }
+
+  function posicionar(foto) {
+    if (!area) return;
+    const { grade, borda } = area;
+    const proporcao = proporcaoDaMoldura(foto.proporcao, borda);
+    // Cabe na caixa da região e, girada, cabe inteira na área.
+    let larguraFoto = Math.min(area.caixaX, area.caixaY * proporcao);
+    const girada = U.caixaGirada(larguraFoto, larguraFoto / proporcao, foto.giro);
+    larguraFoto *= Math.min(1, area.largura / girada.largura, area.altura / girada.altura);
+    const alturaFoto = larguraFoto / proporcao;
+
+    const regiaoX = area.largura / grade.colunas;
+    const regiaoY = area.altura / grade.linhas;
+    const linha = Math.floor(foto.lugar / grade.colunas);
+    const coluna = foto.lugar % grade.colunas;
+    // Última linha incompleta fica centralizada, sem deixar um canto vazio.
+    const naLinha = Math.min(grade.colunas, fotos.length - linha * grade.colunas);
+    const recuo = ((grade.colunas - naLinha) * regiaoX) / 2;
+    const caixa = U.caixaGirada(larguraFoto, alturaFoto, foto.giro);
+    const x = U.limitar(recuo + (coluna + 1 / 2 + foto.desvioX) * regiaoX, caixa.largura / 2, area.largura - caixa.largura / 2);
+    const y = U.limitar((linha + 1 / 2 + foto.desvioY) * regiaoY, caixa.altura / 2, area.altura - caixa.altura / 2);
+
+    const s = foto.celula.style;
+    s.setProperty('--foto-largura', larguraFoto + 'px');
+    s.setProperty('--foto-altura', alturaFoto + 'px');
+    s.left = x - larguraFoto / 2 + 'px';
+    s.top = y - alturaFoto / 2 + 'px';
   }
 
   function aoRedimensionar() {
@@ -151,6 +180,7 @@
     if (muralAntigo) window.setTimeout(() => { muralAntigo.textContent = ''; }, C.TROCA_ETAPA_MS);
     mural = null;
     fotos = [];
+    area = null;
   }
 
   DR30.Abertura = { iniciar, encerrar };

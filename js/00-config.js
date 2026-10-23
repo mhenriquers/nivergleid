@@ -23,8 +23,9 @@
         'WhatsApp Image 2026-10-23 at 13.00.03 (6).jpeg',
         'WhatsApp Image 2026-10-23 at 13.00.03.jpeg'
       ],
-      // Largura dividida pela altura da moldura; as fotos atuais são retrato (904x1280).
-      PROPORCAO_MOLDURA: 0.78
+      // Largura dividida pela altura da foto como ela aparece (as atuais são 1280x904, deitadas).
+      // Só vale até a foto carregar: depois a moldura segue o formato real de cada uma, sem cortar.
+      PROPORCAO_PADRAO: 1.416
     },
 
     ABERTURA: {
@@ -37,7 +38,7 @@
       ROTACAO_MIN_GRAUS: 4, // toda foto fica visivelmente inclinada, alternando o lado
       ROTACAO_MAX_GRAUS: 12,
       DESVIO_MAX: 0.3, // quanto, em fração da região, a foto pode fugir do centro da região dela
-      ESCALA_FOTO: 1.2 // foto um pouco maior que a região, para as vizinhas se sobreporem
+      ESCALA_FOTO: 1.4 // foto maior que a região, para ocupar mais tela e as vizinhas se sobreporem
     },
 
     NOTAS: {
