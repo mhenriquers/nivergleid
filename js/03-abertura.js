@@ -1,5 +1,5 @@
-// Etapa 1: as fotos sobem uma a uma e se empilham no centro, e a etapa termina sozinha.
-// Não tem botão de pular: quem decide o fim é o tempo configurado.
+// Etapa 1: as fotos sobem uma a uma e se espalham pela tela como uma colagem,
+// e a etapa termina sozinha. Não tem botão de pular: quem decide o fim é o tempo configurado.
 (function (DR30) {
   'use strict';
 
@@ -21,6 +21,10 @@
     const intervalo = arquivos.length > 1 ? janela / (arquivos.length - 1) : 0;
 
     fotos = arquivos.map((arquivo, indice) => criarFoto(arquivo, indice, arquivos.length));
+    // As fotos entram em ordem alfabética, mas cada uma cai numa região sorteada da tela.
+    U.embaralhar(fotos.map((foto, indice) => indice)).forEach((lugar, indice) => {
+      fotos[indice].lugar = lugar;
+    });
     distribuir();
     fotos.forEach((foto, indice) => {
       agendar(() => liberar(foto), A.ATRASO_INICIAL_MS + indice * intervalo);
@@ -35,19 +39,24 @@
     celula.className = 'mural__celula';
     const moldura = document.createElement('figure');
     moldura.className = 'foto';
-    // Deslocamento e rotação sorteados por foto, para a pilha parecer jogada à mão.
-    const dx = U.aleatorio(-A.DESLOCAMENTO_MAX, A.DESLOCAMENTO_MAX) * 100;
-    const dy = U.aleatorio(-A.DESLOCAMENTO_MAX, A.DESLOCAMENTO_MAX) * 100;
-    const giro = U.aleatorio(-A.ROTACAO_MAX_GRAUS, A.ROTACAO_MAX_GRAUS);
-    moldura.style.transform = 'translate(' + dx + '%, ' + dy + '%) rotate(' + giro + 'deg)';
+    // Giro e desvio sorteados uma vez por foto e guardados, para a tela poder girar sem embaralhar tudo.
+    const foto = {
+      celula,
+      lugar: indice,
+      giro: (indice % 2 ? -1 : 1) * U.aleatorio(A.ROTACAO_MIN_GRAUS, A.ROTACAO_MAX_GRAUS),
+      desvioX: U.aleatorio(-A.DESVIO_MAX, A.DESVIO_MAX),
+      desvioY: U.aleatorio(-A.DESVIO_MAX, A.DESVIO_MAX),
+      pronta: false,
+      naHora: false,
+      descartada: false
+    };
+    moldura.style.transform = 'rotate(' + foto.giro + 'deg)';
 
     const imagem = document.createElement('img');
     imagem.className = 'foto__imagem';
     imagem.alt = U.formatar(C.TEXTOS.FOTO_ALT, { numero: indice + 1, total });
     imagem.setAttribute('loading', 'eager');
     imagem.setAttribute('decoding', 'async');
-
-    const foto = { celula, pronta: false, naHora: false, descartada: false };
     imagem.addEventListener('load', () => aoCarregar(foto, imagem));
     imagem.addEventListener('error', () => descartar(foto));
     imagem.src = C.FOTOS.PASTA + encodeURIComponent(arquivo);
@@ -90,14 +99,37 @@
     foto.celula.classList.add('mural__celula--vazia');
   }
 
-  // Todas as fotos têm o mesmo tamanho: a maior que cabe sozinha no centro da área.
+  // Divide a área em regiões (uma por foto) e põe cada foto perto do centro da sua,
+  // com desvio e um pouco maior que a região, para formar uma colagem que cobre a tela toda.
   function distribuir() {
     quadroPendente = 0;
-    if (!mural) return;
-    const maior = U.melhorGrade(1, mural.clientWidth, mural.clientHeight, C.FOTOS.PROPORCAO_MOLDURA);
-    const ocupacao = C.ABERTURA.OCUPACAO_AREA;
-    mural.style.setProperty('--foto-largura', maior.largura * ocupacao + 'px');
-    mural.style.setProperty('--foto-altura', maior.altura * ocupacao + 'px');
+    if (!mural || !fotos.length) return;
+    const A = C.ABERTURA;
+    const largura = mural.clientWidth;
+    const altura = mural.clientHeight;
+    const grade = U.melhorGrade(fotos.length, largura, altura, C.FOTOS.PROPORCAO_MOLDURA);
+    const larguraFoto = grade.largura * A.ESCALA_FOTO;
+    const alturaFoto = grade.altura * A.ESCALA_FOTO;
+    const regiaoX = largura / grade.colunas;
+    const regiaoY = altura / grade.linhas;
+    mural.style.setProperty('--foto-largura', larguraFoto + 'px');
+    mural.style.setProperty('--foto-altura', alturaFoto + 'px');
+
+    fotos.forEach((foto) => {
+      const linha = Math.floor(foto.lugar / grade.colunas);
+      const coluna = foto.lugar % grade.colunas;
+      // Última linha incompleta fica centralizada, sem deixar um canto vazio.
+      const naLinha = Math.min(grade.colunas, fotos.length - linha * grade.colunas);
+      const recuo = ((grade.colunas - naLinha) * regiaoX) / 2;
+      const centroX = recuo + (coluna + 1 / 2 + foto.desvioX) * regiaoX;
+      const centroY = (linha + 1 / 2 + foto.desvioY) * regiaoY;
+      // A foto girada inteira fica dentro da área.
+      const caixa = U.caixaGirada(larguraFoto, alturaFoto, foto.giro);
+      const x = U.limitar(centroX, caixa.largura / 2, largura - caixa.largura / 2);
+      const y = U.limitar(centroY, caixa.altura / 2, altura - caixa.altura / 2);
+      foto.celula.style.left = x - larguraFoto / 2 + 'px';
+      foto.celula.style.top = y - alturaFoto / 2 + 'px';
+    });
   }
 
   function aoRedimensionar() {

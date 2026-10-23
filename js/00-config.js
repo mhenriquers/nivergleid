@@ -34,9 +34,10 @@
       ATRASO_INICIAL_MS: 400, // o título aparece sozinho antes da primeira foto
       ENTRADA_FOTO_MS: 900,
       PAUSA_FINAL_MS: 1300, // mural completo parado antes de seguir
-      ROTACAO_MAX_GRAUS: 3,
-      DESLOCAMENTO_MAX: 0.04, // fração da foto, para a pilha não ficar perfeitamente alinhada
-      OCUPACAO_AREA: 0.82 // quanto da área livre a foto ocupa; a folga acomoda giro, fita e deslocamento
+      ROTACAO_MIN_GRAUS: 4, // toda foto fica visivelmente inclinada, alternando o lado
+      ROTACAO_MAX_GRAUS: 12,
+      DESVIO_MAX: 0.3, // quanto, em fração da região, a foto pode fugir do centro da região dela
+      ESCALA_FOTO: 1.2 // foto um pouco maior que a região, para as vizinhas se sobreporem
     },
 
     NOTAS: {

@@ -47,6 +47,18 @@
     return lista.slice().sort(comparar);
   }
 
+  // Fisher-Yates numa cópia: a lista original não muda.
+  function embaralhar(lista, sorteio) {
+    const copia = lista.slice();
+    for (let i = copia.length - 1; i > 0; i -= 1) {
+      const j = Math.floor((sorteio || Math.random)() * (i + 1));
+      const troca = copia[i];
+      copia[i] = copia[j];
+      copia[j] = troca;
+    }
+    return copia;
+  }
+
   // Desaceleração de saída (easeOutQuart): rápido no começo, arrastado no final.
   function desacelerar(t) {
     return 1 - Math.pow(1 - t, 4);
@@ -136,6 +148,7 @@
     chaveDoNome,
     validarNovoNome,
     ordenarAlfabetico,
+    embaralhar,
     desacelerar,
     melhorGrade,
     caixaGirada,
