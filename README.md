@@ -21,6 +21,7 @@ Dê dois cliques no `index.html`. Funciona direto do arquivo (`file://`) e tamb�
 | Cores do papel, tinta, fita, tamanhos | `css/01-tokens.css`                    |
 | Fontes                           | pasta `fontes/` + TODO no topo de `css/01-tokens.css` |
 | Título, regra e textos fixos     | `index.html`                                |
+| Imagem da prévia ao compartilhar o link | `capa-compartilhar.jpeg` (troque o arquivo mantendo o nome) e as tags `og:` no `index.html` |
 
 **Fotos:** o navegador não consegue listar uma pasta quando abre por `file://`,
 por isso cada foto nova precisa entrar também na lista `FOTOS.ARQUIVOS`.
