@@ -1,4 +1,4 @@
-// Etapa 1: as fotos sobem uma a uma até formar o mural, e a etapa termina sozinha.
+// Etapa 1: as fotos sobem uma a uma e se empilham no centro, e a etapa termina sozinha.
 // Não tem botão de pular: quem decide o fim é o tempo configurado.
 (function (DR30) {
   'use strict';
@@ -35,7 +35,7 @@
     celula.className = 'mural__celula';
     const moldura = document.createElement('figure');
     moldura.className = 'foto';
-    // Deslocamento e rotação sorteados por foto, para o mural parecer colado à mão.
+    // Deslocamento e rotação sorteados por foto, para a pilha parecer jogada à mão.
     const dx = U.aleatorio(-A.DESLOCAMENTO_MAX, A.DESLOCAMENTO_MAX) * 100;
     const dy = U.aleatorio(-A.DESLOCAMENTO_MAX, A.DESLOCAMENTO_MAX) * 100;
     const giro = U.aleatorio(-A.ROTACAO_MAX_GRAUS, A.ROTACAO_MAX_GRAUS);
@@ -90,15 +90,14 @@
     foto.celula.classList.add('mural__celula--vazia');
   }
 
+  // Todas as fotos têm o mesmo tamanho: a maior que cabe sozinha no centro da área.
   function distribuir() {
     quadroPendente = 0;
     if (!mural) return;
-    const grade = U.melhorGrade(fotos.length, mural.clientWidth, mural.clientHeight, C.FOTOS.PROPORCAO_MOLDURA);
-    const ocupacao = C.ABERTURA.OCUPACAO_CELULA;
-    mural.style.setProperty('--mural-colunas', grade.colunas);
-    mural.style.setProperty('--mural-linhas', grade.linhas);
-    mural.style.setProperty('--foto-largura', grade.largura * ocupacao + 'px');
-    mural.style.setProperty('--foto-altura', grade.altura * ocupacao + 'px');
+    const maior = U.melhorGrade(1, mural.clientWidth, mural.clientHeight, C.FOTOS.PROPORCAO_MOLDURA);
+    const ocupacao = C.ABERTURA.OCUPACAO_AREA;
+    mural.style.setProperty('--foto-largura', maior.largura * ocupacao + 'px');
+    mural.style.setProperty('--foto-altura', maior.altura * ocupacao + 'px');
   }
 
   function aoRedimensionar() {

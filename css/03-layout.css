@@ -66,15 +66,12 @@ html:not([data-etapa="roleta"]) body {
   padding: var(--respiro-topo) var(--respiro-direita) var(--respiro-base) var(--respiro-esquerda);
 }
 
-/* Flex em vez de grid para a última linha incompleta ficar centralizada. */
+/* As fotos se empilham no centro: cada célula ocupa a área inteira e a mais nova fica por cima. */
 .abertura__mural {
+  position: relative;
   flex: 1 1 auto;
   width: 100%;
   min-height: 0;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-content: center;
 }
 
 /* ---------- Notas: instrução no topo, contador no canto, mural no resto ---------- */

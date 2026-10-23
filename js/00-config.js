@@ -21,7 +21,6 @@
         'WhatsApp Image 2026-10-23 at 13.00.03 (4).jpeg',
         'WhatsApp Image 2026-10-23 at 13.00.03 (5).jpeg',
         'WhatsApp Image 2026-10-23 at 13.00.03 (6).jpeg',
-        'WhatsApp Image 2026-10-23 at 13.00.03 (7).jpeg',
         'WhatsApp Image 2026-10-23 at 13.00.03.jpeg'
       ],
       // Largura dividida pela altura da moldura; as fotos atuais são retrato (904x1280).
@@ -36,8 +35,8 @@
       ENTRADA_FOTO_MS: 900,
       PAUSA_FINAL_MS: 1300, // mural completo parado antes de seguir
       ROTACAO_MAX_GRAUS: 3,
-      DESLOCAMENTO_MAX: 0.06, // fração da foto, para o mural não ficar alinhado demais
-      OCUPACAO_CELULA: 0.9 // quanto da célula da grade a foto ocupa
+      DESLOCAMENTO_MAX: 0.04, // fração da foto, para a pilha não ficar perfeitamente alinhada
+      OCUPACAO_AREA: 0.82 // quanto da área livre a foto ocupa; a folga acomoda giro, fita e deslocamento
     },
 
     NOTAS: {

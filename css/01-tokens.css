@@ -111,10 +111,8 @@
   --pulso-opacidade: 0.55;
 
   /* Fotos da abertura (largura e altura reais chegam do 03-abertura.js) */
-  --mural-colunas: 2;
-  --mural-linhas: 4;
-  --foto-largura: 40vw;
-  --foto-altura: 50vw;
+  --foto-largura: 70vw;
+  --foto-altura: 90vw;
   --foto-borda: 0.05;
   --foto-borda-base: 0.15;
   --foto-subida: 110vh;

@@ -12,11 +12,14 @@
 }
 
 .mural__celula {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: calc(100% / var(--mural-colunas));
-  height: calc(100% / var(--mural-linhas));
   opacity: 0;
 }
 
