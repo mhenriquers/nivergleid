@@ -100,12 +100,7 @@ const NOTAS = [
     cor: "#f7e6a2",
     rotacao: 3
   },
-  {
-    adjetivo: "Atrasada",
-    frase: "Marca às sete da noite, chega às sete e quarenta, e culpa o trânsito num sábado.",
-    cor: "#cddcea",
-    rotacao: -5
-  },
+
   {
     adjetivo: "Fofoqueira",
     frase: "Sabe da vida de todo mundo antes de todo mundo saber que tem vida.",
