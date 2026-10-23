@@ -154,13 +154,8 @@
 }
 
 .lista-nomes__item {
-  display: inline-flex;
-  align-items: center;
   max-width: 100%;
   margin: var(--espaco-1);
-  padding-left: var(--espaco-3);
-  background-color: var(--cor-postit);
-  box-shadow: var(--sombra-suave);
   transform: rotate(var(--giro-etiqueta));
 }
 
@@ -168,19 +163,39 @@
   transform: rotate(calc(var(--giro-etiqueta) * -1));
 }
 
+/* A etiqueta inteira é o botão: tocar no nome pede a confirmação para tirar. */
+.lista-nomes__botao {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: var(--alvo-toque);
+  padding: 0 var(--espaco-3);
+  border: 0;
+  background-color: var(--cor-postit);
+  box-shadow: var(--sombra-suave);
+  touch-action: manipulation;
+  transition: transform var(--tempo-toque) ease, box-shadow var(--tempo-toque) ease;
+}
+
+.lista-nomes__botao:active:not(:disabled) {
+  transform: translateY(var(--botao-afundar));
+  box-shadow: none;
+}
+
+.lista-nomes__botao:disabled {
+  opacity: var(--opacidade-desligado);
+}
+
 .lista-nomes__nome {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.lista-nomes__remover {
+.lista-nomes__icone {
   flex: none;
-  min-width: var(--alvo-toque);
-  min-height: var(--alvo-toque);
-  padding: 0;
-  border: 0;
-  background: transparent;
+  margin-left: var(--espaco-3);
   font-size: var(--texto-g);
   line-height: 1;
   color: var(--cor-tinta-suave);

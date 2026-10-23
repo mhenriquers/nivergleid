@@ -216,8 +216,20 @@
   color: var(--cor-tinta-suave);
 }
 
-/* ---------- Resultado e painel de erro: cartão no meio da tela ---------- */
+.cadastro__dica {
+  margin-top: var(--espaco-3);
+  font-size: var(--texto-p);
+  color: var(--cor-tinta-suave);
+}
+
+/* Sem nomes na lista, a dica de como tirar não faz sentido. */
+.lista-nomes:empty + .cadastro__dica {
+  display: none;
+}
+
+/* ---------- Resultado, confirmação e painel de erro: cartão no meio da tela ---------- */
 .resultado,
+.confirmar,
 .erro {
   position: fixed;
   top: 0;
@@ -231,7 +243,8 @@
   background-color: var(--cor-veu);
 }
 
-.resultado {
+.resultado,
+.confirmar {
   z-index: var(--z-resultado);
 }
 
@@ -240,14 +253,24 @@
 }
 
 .resultado__cartao,
+.confirmar__cartao,
 .erro__cartao {
   width: 100%;
   max-width: var(--resultado-largura);
 }
 
-.resultado__cartao {
+.resultado__cartao,
+.confirmar__cartao {
   text-align: center;
   transform: rotate(var(--giro-cartao));
+}
+
+.confirmar__texto {
+  font-family: var(--fonte-manuscrita);
+  font-size: var(--texto-titulo-secao);
+  font-weight: 700;
+  line-height: var(--altura-linha-titulo);
+  overflow-wrap: break-word;
 }
 
 .resultado__rotulo {
@@ -271,6 +294,7 @@
 }
 
 .resultado__acoes,
+.confirmar__acoes,
 .erro__acoes {
   display: flex;
   flex-wrap: wrap;
@@ -279,6 +303,7 @@
 }
 
 .resultado__acoes .botao,
+.confirmar__acoes .botao,
 .erro__acoes .botao {
   margin: var(--espaco-1);
 }

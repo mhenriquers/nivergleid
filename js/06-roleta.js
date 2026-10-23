@@ -1,5 +1,5 @@
-// Etapa 4: cadastro dos nomes, giro com desaceleração e resultado com festa.
-// O desenho do disco fica no 06-roleta-disco.js.
+// Etapa 4: giro com desaceleração e resultado com festa.
+// O cadastro de nomes fica no 06-roleta-cadastro.js e o desenho do disco no 06-roleta-disco.js.
 (function (DR30) {
   'use strict';
 
@@ -8,9 +8,7 @@
   const T = C.TEXTOS;
   const U = DR30.Utils;
   const estado = DR30.Estado.roleta;
-  const PARTES = ['conteudo', 'form', 'campo', 'adicionar', 'contador', 'aviso', 'lista',
-    'canvas', 'girar', 'dica', 'resultado', 'vencedor', 'deNovo', 'fechar'];
-  const RECUSA = { vazio: T.NOME_VAZIO, limite: T.NOME_LIMITE, duplicado: T.NOME_DUPLICADO };
+  const PARTES = ['conteudo', 'canvas', 'girar', 'dica', 'resultado', 'vencedor', 'deNovo', 'fechar'];
   const el = {};
   let quadroGiro = 0;
   let quadroPendente = 0;
@@ -19,9 +17,6 @@
     PARTES.forEach((parte) => {
       el[parte] = secao.querySelector('[data-roleta="' + parte + '"]');
     });
-    el.campo.maxLength = R.NOME_MAX_CARACTERES;
-    el.form.addEventListener('submit', aoAdicionar); // cobre o botão e o Enter
-    el.lista.addEventListener('click', aoRemover);
     el.girar.addEventListener('click', girar);
     el.deNovo.addEventListener('click', girarDeNovo);
     el.fechar.addEventListener('click', () => fecharResultado(true));
@@ -29,85 +24,20 @@
     window.addEventListener('resize', aoRedimensionar);
     DR30.RoletaDisco.preparar(el.canvas);
     DR30.RoletaDisco.redimensionar();
+    DR30.RoletaCadastro.preparar(secao, nomesMudaram);
     nomesMudaram();
-  }
-
-  function aoAdicionar(evento) {
-    evento.preventDefault();
-    if (estado.girando) return;
-    const nome = U.normalizarNome(el.campo.value).slice(0, R.NOME_MAX_CARACTERES);
-    const recusa = U.validarNovoNome(nome, estado.nomes, R.MAX_NOMES);
-    if (recusa) {
-      avisar(U.formatar(RECUSA[recusa], { nome, max: R.MAX_NOMES }), true);
-      // Texto recusado fica selecionado: dá para corrigir ou digitar outro por cima.
-      if (!el.campo.disabled) { el.campo.focus(); el.campo.select(); }
-      return;
-    }
-    estado.nomes.push(nome);
-    el.campo.value = '';
-    const cheio = estado.nomes.length >= R.MAX_NOMES;
-    avisar(U.formatar(cheio ? T.NOME_LIMITE : T.NOME_ADICIONADO, { nome, max: R.MAX_NOMES }), false);
-    nomesMudaram();
-    // Mantém o teclado aberto para o próximo nome.
-    if (!el.campo.disabled) el.campo.focus();
-  }
-
-  function aoRemover(evento) {
-    const botao = evento.target.closest('[data-remover]');
-    if (!botao || estado.girando) return;
-    const indice = Number(botao.getAttribute('data-remover'));
-    const removido = estado.nomes.splice(indice, 1)[0];
-    if (removido === undefined) return;
-    avisar(U.formatar(T.NOME_REMOVIDO, { nome: removido }), false);
-    nomesMudaram();
-    // O foco vai para o próximo "remover", ou volta para o campo se a lista esvaziou.
-    const botoes = el.lista.querySelectorAll('[data-remover]');
-    (botoes[Math.min(indice, botoes.length - 1)] || el.campo).focus();
   }
 
   function nomesMudaram() {
-    renderizarLista();
     DR30.RoletaDisco.desenhar(estado.nomes);
     atualizarControles();
   }
 
-  function renderizarLista() {
-    el.lista.textContent = '';
-    estado.nomes.forEach((nome, indice) => {
-      const item = document.createElement('li');
-      item.className = 'lista-nomes__item';
-      const texto = document.createElement('span');
-      texto.className = 'lista-nomes__nome';
-      texto.textContent = nome;
-      const remover = document.createElement('button');
-      remover.type = 'button';
-      remover.className = 'lista-nomes__remover';
-      remover.setAttribute('data-remover', String(indice));
-      remover.setAttribute('aria-label', U.formatar(T.REMOVER, { nome }));
-      remover.textContent = '×';
-      item.appendChild(texto);
-      item.appendChild(remover);
-      el.lista.appendChild(item);
-    });
-  }
-
-  // Durante o giro nada muda de lugar: campo, remover e girar ficam travados.
   function atualizarControles() {
     const total = estado.nomes.length;
-    const cheio = total >= R.MAX_NOMES;
-    el.campo.disabled = cheio || estado.girando;
-    el.adicionar.disabled = cheio || estado.girando;
     el.girar.disabled = total < R.MIN_NOMES || estado.girando;
-    Array.prototype.forEach.call(el.lista.querySelectorAll('[data-remover]'), (botao) => {
-      botao.disabled = estado.girando;
-    });
-    el.contador.textContent = U.formatar(T.CONTADOR_NOMES, { total, max: R.MAX_NOMES });
     el.dica.textContent = total < R.MIN_NOMES ? U.formatar(T.FALTAM_NOMES, { min: R.MIN_NOMES }) : '';
-  }
-
-  function avisar(texto, ehErro) {
-    el.aviso.textContent = texto;
-    el.aviso.classList.toggle('aviso--erro', Boolean(ehErro));
+    DR30.RoletaCadastro.atualizar();
   }
 
   // O vencedor é sorteado antes; o giro só calcula o ângulo que para nele.
@@ -123,7 +53,7 @@
     const duracao = reduzido ? R.GIRO_REDUZIDO_MS : R.GIRO_MS;
     const comeco = window.performance.now();
     estado.girando = true;
-    avisar(T.GIRANDO, false);
+    DR30.RoletaCadastro.avisar(T.GIRANDO, false);
     atualizarControles();
     const passo = (agora) => {
       const progresso = U.limitar((agora - comeco) / duracao, 0, 1);
@@ -142,7 +72,7 @@
     estado.girando = false;
     estado.ultimoVencedor = estado.nomes[indice];
     estado.rodadas += 1;
-    avisar('', false);
+    DR30.RoletaCadastro.avisar('', false);
     atualizarControles();
     mostrarResultado(estado.ultimoVencedor);
   }

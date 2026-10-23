@@ -72,7 +72,18 @@
           <p class="aviso" data-roleta="aviso" role="status" aria-live="polite"></p>
           <p class="cadastro__contador" data-roleta="contador"></p>
           <ul class="lista-nomes" data-roleta="lista" aria-label="Nomes na roleta"></ul>
+          <p class="cadastro__dica">toque num nome para tirar da roleta</p>
         </form>
+      </div>
+
+      <div class="confirmar" data-roleta="confirmar" role="dialog" aria-modal="true" aria-labelledby="confirmar-texto" hidden>
+        <div class="confirmar__cartao cartao">
+          <p id="confirmar-texto" class="confirmar__texto" data-roleta="confirmarTexto"></p>
+          <div class="confirmar__acoes">
+            <button type="button" class="botao botao--primario" data-roleta="confirmarSim">tirar</button>
+            <button type="button" class="botao botao--secundario" data-roleta="confirmarNao">cancelar</button>
+          </div>
+        </div>
       </div>
 
       <div class="resultado" data-roleta="resultado" role="dialog" aria-modal="true" aria-labelledby="resultado-nome" hidden>
@@ -113,6 +124,7 @@
   <script src="js/04-notas.js"></script>
   <script src="js/05-transicao.js"></script>
   <script src="js/06-roleta-disco.js"></script>
+  <script src="js/06-roleta-cadastro.js"></script>
   <script src="js/06-roleta.js"></script>
   <script src="js/07-confetti.js"></script>
   <script src="js/08-app.js"></script>

@@ -44,7 +44,8 @@ js/03-abertura.js     etapa 1
 js/04-notas.js        etapa 2 (lê o NOTAS do notas.js da raiz)
 js/05-transicao.js    etapa 3
 js/06-roleta-disco.js desenho da roleta em canvas
-js/06-roleta.js       etapa 4: cadastro, giro e resultado
+js/06-roleta-cadastro.js cadastro de nomes; tocar num nome pede confirmação para tirar
+js/06-roleta.js       etapa 4: giro e resultado
 js/07-confetti.js     confete e fogos em canvas (máximo 120 partículas)
 js/08-app.js          inicialização, troca de etapa e painel de erro
 ```

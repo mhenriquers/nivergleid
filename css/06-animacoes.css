@@ -86,7 +86,8 @@
   opacity: 1;
 }
 
-.resultado__cartao {
+.resultado__cartao,
+.confirmar__cartao {
   animation: surgir-cartao var(--duracao-nota) var(--curva-colar) both;
 }
 
@@ -94,8 +95,13 @@
 @media (prefers-reduced-motion: reduce) {
   .mural__celula--visivel,
   .postit__papel,
-  .resultado__cartao {
+  .resultado__cartao,
+  .confirmar__cartao {
     animation-name: aparecer;
+  }
+
+  .lista-nomes__botao {
+    transition: none;
   }
 
   .notas__instrucao {
