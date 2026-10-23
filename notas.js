@@ -19,6 +19,13 @@ const NOTAS = [
   },
 
   {
+    adjetivo: "Atrasada",
+    frase: "Chega quarenta minutos depois do combinado e jura que a culpa é genética, porque só sendo filha da minha mãe mesmo.",
+    cor: "#cddcea",
+    rotacao: -5
+  },
+
+  {
     adjetivo: "Chata",
     frase: "não tem outra mulher mais chata nessa família",
     cor: "#f7e6a2",
@@ -37,7 +44,7 @@ const NOTAS = [
 
   {
     adjetivo: "Persuasiva",
-    frase: "Convence qualquer pessoa a fazer o que ela já tinha decidido que era o certo.",
+    frase: "Convence qualquer pessoa a fazer o que ela já tinha decidido que era o certo. nem que seja pelo cansaço.",
     cor: "#cddcea",
     rotacao: 8
   },
@@ -51,6 +58,12 @@ const NOTAS = [
   },
 
 
+  {
+    adjetivo: "Perdoada",
+    frase: "Chata como sempre, mas eu perdôo só porque é mãe do meu afilhado querido e ninguém briga com a mãe do afilhado.",
+    cor: "#cddcea",
+    rotacao: -5
+  },
 
   // Faceta 4, trabalhando e resolvendo problema
   {
@@ -75,24 +88,10 @@ const NOTAS = [
   },
   {
     adjetivo: "Exigente",
-    frase: "Tira quarenta fotos pra escolher uma e ainda reclama que nas quarenta saiu mal.",
+    frase: "Tira quarenta e quatro fotos pra escolher uma e ainda reclama que nas quarenta e quatro saiu mal.",
     cor: "#f3c9c9",
     rotacao: -3
   },
-  // Faceta 5, quando ninguém está vendo
-
-
-  // Faceta 6, criança e adolescente
-
-
-  {
-    adjetivo: "Sabichona",
-    frase: "Sabe o melhor caminho, o melhor restaurante e o que eu devia fazer da vida. E, infelizmente.",
-    cor: "#f7e6a2",
-    rotacao: 6
-  },
-
-
 
   // Faceta 7, defeitos que são motivo de afeto
   {
