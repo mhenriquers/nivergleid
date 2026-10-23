@@ -1,0 +1,199 @@
+/* 04-componentes.css: peças reaproveitadas (foto, fita, post-it, cartão, botão, campo, lista). */
+
+/* ---------- Foto: borda branca de revelação, tamanho calculado pelo 03-abertura.js ---------- */
+.foto {
+  position: relative;
+  width: var(--foto-largura);
+  height: var(--foto-altura);
+  padding: calc(var(--foto-largura) * var(--foto-borda));
+  padding-bottom: calc(var(--foto-largura) * var(--foto-borda-base));
+  background-color: var(--cor-branco-foto);
+  box-shadow: var(--sombra-papel);
+}
+
+.foto__imagem {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background-color: var(--cor-papel-borda);
+}
+
+/* ---------- Fita adesiva: no topo da foto e dos cartões ---------- */
+.foto::before,
+.cartao::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 1;
+  width: var(--fita-largura);
+  height: var(--fita-altura);
+  transform: translate(-50%, var(--fita-subida)) rotate(var(--fita-giro));
+  background-color: var(--cor-fita);
+  background-image: repeating-linear-gradient(90deg,
+    transparent 0,
+    transparent var(--fita-listra),
+    var(--cor-fita-listra) var(--fita-listra),
+    var(--cor-fita-listra) calc(var(--fita-listra) * 2));
+  box-shadow: var(--sombra-fita);
+}
+
+.foto::before {
+  height: calc(var(--foto-largura) * var(--fita-proporcao));
+}
+
+/* ---------- Post-it: o invólucro posiciona e gira (JS), o papel anima a colagem ---------- */
+.postit {
+  position: absolute;
+  width: var(--postit-largura);
+}
+
+.postit__papel {
+  padding: var(--postit-respiro);
+  background-color: var(--cor-postit);
+  background-image: linear-gradient(var(--postit-luz),
+    var(--cor-postit-brilho) 0,
+    transparent 40%,
+    transparent 70%,
+    var(--cor-postit-dobra) 100%);
+  box-shadow: var(--sombra-papel);
+}
+
+.postit__adjetivo {
+  font-family: var(--fonte-manuscrita);
+  font-size: var(--texto-adjetivo);
+  font-weight: 700;
+  line-height: var(--altura-linha-titulo);
+  color: var(--cor-tinta);
+}
+
+.postit__frase {
+  margin-top: var(--espaco-2);
+  font-size: var(--texto-frase);
+  line-height: var(--altura-linha);
+}
+
+/* ---------- Cartão de papel com fita (regra, resultado, erro) ---------- */
+.cartao {
+  position: relative;
+  padding: var(--espaco-5) var(--espaco-4) var(--espaco-4);
+  background-color: var(--cor-cartao);
+  box-shadow: var(--sombra-papel);
+}
+
+/* ---------- Botões ---------- */
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--alvo-toque);
+  padding: var(--espaco-2) var(--espaco-4);
+  border: var(--borda-botao) solid var(--cor-tinta);
+  border-radius: var(--raio-pequeno);
+  background-color: var(--cor-cartao);
+  font-family: var(--fonte-manuscrita);
+  font-size: var(--texto-g);
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: var(--sombra-botao);
+  touch-action: manipulation;
+  transition: transform var(--tempo-toque) ease, box-shadow var(--tempo-toque) ease;
+}
+
+.botao:active:not(:disabled) {
+  transform: translateY(var(--botao-afundar));
+  box-shadow: none;
+}
+
+.botao:disabled {
+  opacity: var(--opacidade-desligado);
+  box-shadow: none;
+}
+
+.botao--primario {
+  border-color: var(--cor-destaque-escuro);
+  background-color: var(--cor-destaque);
+  color: var(--cor-sobre-destaque);
+}
+
+.botao--secundario {
+  background-color: transparent;
+}
+
+/* ---------- Campo de texto ---------- */
+.campo__rotulo {
+  display: block;
+  margin-bottom: var(--espaco-2);
+  font-family: var(--fonte-manuscrita);
+  font-size: var(--texto-g);
+  font-weight: 700;
+}
+
+/* width 0 + flex-grow: o campo ocupa a sobra da linha sem impor a largura padrão de 20 letras. */
+.campo {
+  flex: 1 1 auto;
+  width: 0;
+  min-width: 0;
+  min-height: var(--alvo-toque);
+  padding: var(--espaco-2) var(--espaco-3);
+  border: var(--borda-botao) solid var(--cor-tinta);
+  border-radius: var(--raio-pequeno);
+  background-color: var(--cor-campo);
+  font-size: max(var(--texto-m), var(--campo-fonte-min));
+}
+
+.campo:disabled {
+  opacity: var(--opacidade-desligado);
+}
+
+/* ---------- Lista de nomes em etiquetas ---------- */
+.lista-nomes {
+  display: flex;
+  flex-wrap: wrap;
+  margin: calc(var(--espaco-1) * -1);
+}
+
+.lista-nomes__item {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  margin: var(--espaco-1);
+  padding-left: var(--espaco-3);
+  background-color: var(--cor-postit);
+  box-shadow: var(--sombra-suave);
+  transform: rotate(var(--giro-etiqueta));
+}
+
+.lista-nomes__item:nth-child(even) {
+  transform: rotate(calc(var(--giro-etiqueta) * -1));
+}
+
+.lista-nomes__nome {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lista-nomes__remover {
+  flex: none;
+  min-width: var(--alvo-toque);
+  min-height: var(--alvo-toque);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: var(--texto-g);
+  line-height: 1;
+  color: var(--cor-tinta-suave);
+}
+
+/* ---------- Aviso de validação ---------- */
+.aviso {
+  min-height: calc(var(--texto-p) * var(--altura-linha));
+  margin-top: var(--espaco-2);
+  font-size: var(--texto-p);
+  color: var(--cor-tinta-suave);
+}
+
+.aviso--erro {
+  color: var(--cor-erro);
+}

@@ -1,0 +1,154 @@
+/* 03-layout.css: posição das seções, quem aparece em cada etapa e responsividade. */
+
+/* Abertura, notas e transição ocupam a tela inteira e não rolam. */
+.etapa--tela {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--duracao-troca) ease, visibility 0s linear var(--duracao-troca);
+}
+
+.etapa--abertura {
+  z-index: var(--z-abertura);
+}
+
+.etapa--notas {
+  z-index: var(--z-notas);
+}
+
+/* A roleta segue o fluxo da página para rolar bem com o teclado do celular aberto. */
+.etapa--roleta {
+  display: none;
+  position: relative;
+  z-index: var(--z-roleta);
+  min-height: 100vh;
+}
+
+/* Quem aparece em cada etapa. O 08-app.js troca o data-etapa do <html>.
+   Na transição, as notas continuam na tela (é a página que vira) e a roleta já está embaixo. */
+[data-etapa="abertura"] .etapa--abertura,
+[data-etapa="notas"] .etapa--notas,
+[data-etapa="transicao"] .etapa--notas,
+[data-etapa="transicao"] .etapa--transicao {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+[data-etapa="abertura"] .etapa--abertura,
+[data-etapa="notas"] .etapa--notas {
+  pointer-events: auto;
+}
+
+[data-etapa="transicao"] .etapa--roleta,
+[data-etapa="roleta"] .etapa--roleta {
+  display: block;
+}
+
+/* Fora da roleta a página não rola, para o toque não arrastar a tela. */
+html:not([data-etapa="roleta"]),
+html:not([data-etapa="roleta"]) body {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ---------- Abertura: título em cima, mural de fotos ocupando o resto ---------- */
+.etapa--abertura {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--respiro-topo) var(--respiro-direita) var(--respiro-base) var(--respiro-esquerda);
+}
+
+/* Flex em vez de grid para a última linha incompleta ficar centralizada. */
+.abertura__mural {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+}
+
+/* ---------- Notas: instrução no topo, contador no canto, mural no resto ---------- */
+.notas__topo {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: var(--z-notas-topo);
+  padding: var(--respiro-topo) var(--respiro-direita) 0 var(--respiro-esquerda);
+  text-align: center;
+  pointer-events: none;
+}
+
+.notas__contador {
+  position: absolute;
+  right: var(--respiro-direita);
+  bottom: var(--respiro-base);
+  z-index: var(--z-notas-topo);
+  pointer-events: none;
+}
+
+.notas__mural {
+  position: absolute;
+  top: calc(var(--respiro-topo) + var(--notas-cabecalho));
+  right: var(--respiro-direita);
+  bottom: var(--respiro-base);
+  left: var(--respiro-esquerda);
+}
+
+/* ---------- Roleta: uma coluna no celular, duas em tela larga ---------- */
+/* minmax(0, 1fr) impede que conteúdo largo (campo, etiqueta) alargue a coluna além da tela. */
+.roleta__conteudo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "cabecalho"
+    "palco"
+    "cadastro";
+  justify-items: center;
+  row-gap: var(--espaco-5);
+  column-gap: var(--espaco-6);
+  max-width: var(--roleta-largura-max);
+  margin: 0 auto;
+  padding: var(--respiro-topo) var(--respiro-direita) calc(var(--respiro-base) + var(--espaco-6)) var(--respiro-esquerda);
+}
+
+.roleta__cabecalho {
+  grid-area: cabecalho;
+}
+
+.roleta__palco {
+  grid-area: palco;
+}
+
+.cadastro {
+  grid-area: cadastro;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --roleta-tamanho: var(--roleta-tamanho-largo);
+  }
+
+  .roleta__conteudo {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "palco cabecalho"
+      "palco cadastro";
+    align-items: start;
+    justify-items: stretch;
+  }
+
+  .roleta__palco {
+    align-self: center;
+  }
+}

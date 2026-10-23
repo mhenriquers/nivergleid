@@ -1,0 +1,316 @@
+/* 05-etapas.css: estilos exclusivos de cada etapa (as animações ficam no 06). */
+
+/* ---------- Etapa 1: abertura ---------- */
+.abertura__titulo {
+  flex: none;
+  margin-bottom: var(--espaco-3);
+  font-family: var(--fonte-manuscrita);
+  font-size: var(--texto-titulo);
+  font-weight: 700;
+  line-height: var(--altura-linha-titulo);
+  text-align: center;
+}
+
+.mural__celula {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(100% / var(--mural-colunas));
+  height: calc(100% / var(--mural-linhas));
+  opacity: 0;
+}
+
+/* Foto que não carregou some sem empurrar as outras de lugar. */
+.mural__celula--vazia {
+  visibility: hidden;
+}
+
+/* ---------- Etapa 2: notas ---------- */
+.etapa--notas {
+  cursor: pointer;
+  touch-action: manipulation; /* sem zoom de toque duplo na sequência rápida */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.notas__instrucao {
+  display: inline-block;
+  padding: var(--espaco-1) var(--espaco-4);
+  background-color: var(--cor-fita);
+  box-shadow: var(--sombra-fita);
+  font-family: var(--fonte-manuscrita);
+  font-size: var(--texto-g);
+  font-weight: 700;
+  transform: rotate(var(--giro-etiqueta));
+}
+
+.notas__contador {
+  padding: var(--espaco-1) var(--espaco-2);
+  background-color: var(--cor-cartao);
+  font-size: var(--texto-p);
+  color: var(--cor-tinta-suave);
+}
+
+.notas--fim .notas__instrucao,
+.notas--fim .notas__contador {
+  opacity: 0;
+}
+
+/* ---------- Etapa 3: transição (a página das notas vira pela esquerda) ---------- */
+[data-etapa="transicao"] .etapa--notas {
+  z-index: var(--z-virando);
+  transform-origin: left center;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+/* A página escurece conforme vira, como papel saindo da luz. */
+.etapa--notas::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: var(--z-notas-escurecer);
+  background-image: linear-gradient(to left, var(--cor-sombra-virada), transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.etapa--transicao {
+  z-index: var(--z-sombra-virada);
+}
+
+/* Sombra que a folha virando joga na página de baixo. */
+.transicao__sombra {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image: linear-gradient(to right, var(--cor-sombra-virada), transparent var(--sombra-alcance));
+  opacity: 0;
+}
+
+/* ---------- Etapa 4: roleta ---------- */
+.roleta__cabecalho {
+  width: 100%;
+  max-width: var(--cadastro-largura);
+  text-align: center;
+}
+
+.roleta__titulo {
+  font-family: var(--fonte-manuscrita);
+  font-size: var(--texto-titulo-secao);
+  font-weight: 700;
+  line-height: var(--altura-linha-titulo);
+}
+
+.roleta__regra {
+  margin-top: var(--espaco-5);
+  transform: rotate(var(--giro-cartao));
+}
+
+.roleta__regra strong {
+  font-family: var(--fonte-manuscrita);
+  font-size: var(--texto-g);
+}
+
+.roleta__palco {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.roleta__disco {
+  position: relative;
+  width: var(--roleta-tamanho);
+  height: var(--roleta-tamanho);
+  margin-top: calc(var(--roleta-ponteiro) / 2);
+}
+
+/* O canvas gira dentro da janela; o recorte impede que o quadrado girado
+   aumente a largura da página no celular. */
+.roleta__janela {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 50%;
+  box-shadow: var(--sombra-papel);
+}
+
+.roleta__canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.roleta__ponteiro {
+  position: absolute;
+  top: calc(var(--roleta-ponteiro) / -2);
+  left: 50%;
+  z-index: 1;
+  width: 0;
+  height: 0;
+  transform: translateX(-50%);
+  border-top: var(--roleta-ponteiro) solid var(--cor-destaque);
+  border-right: calc(var(--roleta-ponteiro) / 2) solid transparent;
+  border-left: calc(var(--roleta-ponteiro) / 2) solid transparent;
+  filter: drop-shadow(var(--sombra-ponteiro));
+}
+
+.botao--girar {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  width: var(--roleta-botao);
+  height: var(--roleta-botao);
+  min-height: 0;
+  padding: 0;
+  transform: translate(-50%, -50%);
+  border: var(--borda-girar) solid var(--cor-papel);
+  border-radius: 50%;
+  font-size: calc(var(--roleta-tamanho) * var(--girar-fonte));
+  box-shadow: var(--sombra-papel);
+}
+
+.botao--girar:active:not(:disabled) {
+  transform: translate(-50%, -50%) scale(var(--girar-aperto));
+}
+
+.botao--girar:disabled {
+  background-color: var(--cor-tinta-suave);
+  border-color: var(--cor-papel);
+}
+
+.roleta__dica {
+  min-height: calc(var(--texto-p) * var(--altura-linha));
+  margin-top: var(--espaco-3);
+  font-size: var(--texto-p);
+  text-align: center;
+  color: var(--cor-tinta-suave);
+}
+
+.cadastro {
+  width: 100%;
+  max-width: var(--cadastro-largura);
+}
+
+.cadastro__linha {
+  display: flex;
+}
+
+.cadastro__linha .campo {
+  margin-right: var(--espaco-2);
+}
+
+.cadastro__contador {
+  margin: var(--espaco-1) 0 var(--espaco-3);
+  font-size: var(--texto-p);
+  text-align: right;
+  color: var(--cor-tinta-suave);
+}
+
+/* ---------- Resultado e painel de erro: cartão no meio da tela ---------- */
+.resultado,
+.erro {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--respiro-topo) var(--respiro-direita) var(--respiro-base) var(--respiro-esquerda);
+  background-color: var(--cor-veu);
+}
+
+.resultado {
+  z-index: var(--z-resultado);
+}
+
+.erro {
+  z-index: var(--z-erro);
+}
+
+.resultado__cartao,
+.erro__cartao {
+  width: 100%;
+  max-width: var(--resultado-largura);
+}
+
+.resultado__cartao {
+  text-align: center;
+  transform: rotate(var(--giro-cartao));
+}
+
+.resultado__rotulo {
+  color: var(--cor-tinta-suave);
+}
+
+.resultado__nome {
+  margin: var(--espaco-2) 0;
+  font-family: var(--fonte-manuscrita);
+  font-size: var(--texto-resultado);
+  font-weight: 700;
+  line-height: var(--altura-linha-titulo);
+  color: var(--cor-destaque-escuro);
+  overflow-wrap: break-word;
+}
+
+.resultado__frase {
+  font-family: var(--fonte-manuscrita);
+  font-size: var(--texto-g);
+  font-weight: 700;
+}
+
+.resultado__acoes,
+.erro__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: var(--espaco-4) calc(var(--espaco-1) * -1) 0;
+}
+
+.resultado__acoes .botao,
+.erro__acoes .botao {
+  margin: var(--espaco-1);
+}
+
+.erro__titulo {
+  font-family: var(--fonte-manuscrita);
+  font-size: var(--texto-titulo-secao);
+  line-height: var(--altura-linha-titulo);
+  color: var(--cor-erro);
+}
+
+.erro__mensagem {
+  margin-top: var(--espaco-3);
+}
+
+.erro__detalhe {
+  margin-top: var(--espaco-2);
+  font-size: var(--texto-p);
+  color: var(--cor-tinta-suave);
+  overflow-wrap: anywhere;
+}
+
+.erro__detalhe:empty {
+  display: none;
+}
+
+/* ---------- Confete: canvas por cima de tudo, sem bloquear toque ---------- */
+.confete {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: var(--z-confete);
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}

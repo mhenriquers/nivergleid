@@ -1,0 +1,115 @@
+/* 02-base.css: reset, tipografia base e o papel pautado envelhecido. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+  font-size: var(--texto-raiz);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background-color: var(--cor-papel);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--fonte-maquina);
+  font-size: var(--texto-m);
+  line-height: var(--altura-linha);
+  color: var(--cor-tinta);
+  background-color: var(--cor-papel);
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2,
+p,
+figure,
+ul,
+form {
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  list-style: none;
+}
+
+img,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* O atributo hidden sempre vence, mesmo em componente com display próprio. */
+[hidden] {
+  display: none !important;
+}
+
+:focus-visible {
+  outline: var(--foco-espessura) dashed var(--cor-destaque);
+  outline-offset: var(--foco-distancia);
+}
+
+/* Papel pautado envelhecido, só com gradientes. Camadas de cima para baixo:
+   bordas amareladas, duas manchas, linha vermelha da margem,
+   faixa sem pauta no topo e a pauta azul. */
+.pagina {
+  background-color: var(--cor-papel);
+  background-image:
+    radial-gradient(ellipse at center, transparent var(--papel-vinheta), var(--cor-papel-borda) 100%),
+    radial-gradient(circle at 86% 10%, var(--cor-mancha) 0, transparent var(--papel-mancha)),
+    radial-gradient(circle at 10% 92%, var(--cor-mancha) 0, transparent var(--papel-mancha)),
+    linear-gradient(to right,
+      transparent var(--margem-x),
+      var(--cor-margem) var(--margem-x),
+      var(--cor-margem) calc(var(--margem-x) + var(--margem-espessura)),
+      transparent calc(var(--margem-x) + var(--margem-espessura))),
+    linear-gradient(to bottom, var(--cor-papel) var(--pauta-topo), transparent var(--pauta-topo)),
+    repeating-linear-gradient(to bottom,
+      transparent 0,
+      transparent calc(var(--pauta) - var(--pauta-espessura)),
+      var(--cor-pauta) calc(var(--pauta) - var(--pauta-espessura)),
+      var(--cor-pauta) var(--pauta));
+}
+
+/* Se o JavaScript não subir, a página explica o que fazer em vez de ficar parada. */
+.aviso-travado,
+.aviso-sem-js {
+  position: absolute;
+  right: var(--respiro-direita);
+  bottom: var(--respiro-base);
+  left: var(--respiro-esquerda);
+  padding: var(--espaco-3);
+  background-color: var(--cor-cartao);
+  box-shadow: var(--sombra-papel);
+  text-align: center;
+}
+
+.aviso-travado {
+  opacity: 0;
+  animation: aparecer var(--tempo-aparecer) ease var(--atraso-aviso-travado) forwards;
+}
+
+.js-ok .aviso-travado {
+  display: none;
+}

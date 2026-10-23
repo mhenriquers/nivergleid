@@ -1,0 +1,175 @@
+/* =========================================================================
+   01-tokens.css: variáveis de design (cores, fontes, tamanhos, camadas).
+   Os tempos das animações coreografadas NÃO ficam aqui: vêm de js/00-config.js,
+   e o 08-app.js grava --duracao-troca, --duracao-foto, --duracao-nota,
+   --duracao-virada e --duracao-virada-reduzida no <html> ao iniciar.
+   ========================================================================= */
+
+/* TODO FONTES
+   Hoje não existe arquivo de fonte no projeto, então a página usa as pilhas de
+   reserva de --fonte-manuscrita (termina em cursive) e --fonte-maquina (termina em serif).
+   Para usar fontes próprias, sem internet:
+   1. Coloque os arquivos .woff2 na pasta fontes/, por exemplo fontes/manuscrita.woff2
+      e fontes/maquina.woff2. Sugestões gratuitas: Caveat ou Kalam (manuscrita),
+      Special Elite ou Courier Prime (máquina de escrever).
+   2. Descomente os dois blocos @font-face abaixo e ajuste o nome dos arquivos.
+   Os nomes "DR30 Manuscrita" e "DR30 Maquina" já abrem as pilhas, então mais nada
+   precisa mudar. Não aponte para arquivo inexistente: isso gera erro no console.
+
+@font-face {
+  font-family: "DR30 Manuscrita";
+  src: url("../fontes/manuscrita.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DR30 Maquina";
+  src: url("../fontes/maquina.woff2") format("woff2");
+  font-display: swap;
+}
+*/
+
+:root {
+  /* Papel, tinta e destaque */
+  --cor-papel: #f3ead6;
+  --cor-papel-borda: rgba(150, 110, 52, 0.24);
+  --cor-mancha: rgba(176, 132, 70, 0.11);
+  --cor-pauta: rgba(86, 122, 170, 0.3);
+  --cor-margem: rgba(196, 78, 78, 0.45);
+  --cor-tinta: #2f2a26;
+  --cor-tinta-suave: #5d544b;
+  --cor-destaque: #b4475a;
+  --cor-destaque-escuro: #8f3446;
+  --cor-sobre-destaque: #fffaf3;
+  --cor-erro: #a3302f;
+  --cor-cartao: #fbf6ea;
+  --cor-campo: #fffaf0;
+  --cor-branco-foto: #fdfbf6;
+  --cor-postit: #f7e6a2;
+  --cor-postit-brilho: rgba(255, 255, 255, 0.35);
+  --cor-postit-dobra: rgba(80, 60, 30, 0.1);
+  --cor-fita: rgba(232, 220, 186, 0.85);
+  --cor-fita-listra: rgba(255, 255, 255, 0.35);
+  --cor-sombra: rgba(52, 36, 18, 0.22);
+  --cor-sombra-forte: rgba(52, 36, 18, 0.35);
+  --cor-sombra-virada: rgba(40, 28, 14, 0.4);
+  --cor-veu: rgba(47, 42, 38, 0.5);
+
+  /* Fontes: o nome próprio vem primeiro (ver TODO acima), depois fontes de sistema parecidas */
+  --fonte-manuscrita: "DR30 Manuscrita", "Segoe Print", "Bradley Hand", "Noteworthy", "Chalkboard SE", "Comic Sans MS", cursive;
+  --fonte-maquina: "DR30 Maquina", "American Typewriter", "Courier New", Courier, serif;
+
+  /* Texto fluido: cresce em notebook e TV sem quebrar no celular */
+  --texto-raiz: clamp(1rem, 0.55vw + 0.8rem, 1.5rem);
+  --texto-p: 0.85rem;
+  --texto-m: 1rem;
+  --texto-g: 1.3rem;
+  --texto-frase: 1rem;
+  --texto-titulo: clamp(2.4rem, 11vw, 4.2rem);
+  --texto-titulo-secao: clamp(1.9rem, 8vw, 2.8rem);
+  --texto-adjetivo: clamp(1.9rem, 8vw, 2.6rem);
+  --texto-resultado: clamp(2.4rem, 12vw, 4.4rem);
+  --altura-linha: 1.45;
+  --altura-linha-titulo: 1.1;
+  --campo-fonte-min: 16px; /* abaixo disso o iPhone dá zoom ao focar o campo */
+
+  /* Espaçamento */
+  --espaco-1: 0.25rem;
+  --espaco-2: 0.5rem;
+  --espaco-3: 0.75rem;
+  --espaco-4: 1rem;
+  --espaco-5: 1.5rem;
+  --espaco-6: 2rem;
+  --respiro-topo: max(var(--espaco-4), env(safe-area-inset-top));
+  --respiro-base: max(var(--espaco-4), env(safe-area-inset-bottom));
+  --respiro-esquerda: max(var(--espaco-4), env(safe-area-inset-left));
+  --respiro-direita: max(var(--espaco-4), env(safe-area-inset-right));
+
+  /* Papel pautado */
+  --pauta: 1.75rem;
+  --pauta-topo: 3.5rem;
+  --pauta-espessura: 1px;
+  --margem-x: 2.25rem;
+  --margem-espessura: 2px;
+  --papel-vinheta: 55%;
+  --papel-mancha: 24%;
+
+  /* Sombras, bordas e cantos */
+  --sombra-suave: 0 2px 6px var(--cor-sombra);
+  --sombra-papel: 0 6px 14px var(--cor-sombra), 0 1px 3px var(--cor-sombra-forte);
+  --sombra-fita: 0 1px 2px var(--cor-sombra);
+  --sombra-botao: 0 3px 0 var(--cor-sombra-forte);
+  --sombra-ponteiro: 0 2px 2px var(--cor-sombra-forte);
+  --raio-pequeno: 3px;
+  --borda-botao: 2px;
+  --borda-girar: 0.25rem;
+  --foco-espessura: 3px;
+  --foco-distancia: 3px;
+  --alvo-toque: 2.75rem;
+  --botao-afundar: 2px;
+  --opacidade-desligado: 0.5;
+  --pulso-opacidade: 0.55;
+
+  /* Fotos da abertura (largura e altura reais chegam do 03-abertura.js) */
+  --mural-colunas: 2;
+  --mural-linhas: 4;
+  --foto-largura: 40vw;
+  --foto-altura: 50vw;
+  --foto-borda: 0.05;
+  --foto-borda-base: 0.15;
+  --foto-subida: 110vh;
+
+  /* Fita adesiva */
+  --fita-largura: 42%;
+  --fita-altura: 1.4rem;
+  --fita-proporcao: 0.13;
+  --fita-giro: -3deg;
+  --fita-subida: -55%;
+  --fita-listra: 6px;
+
+  /* Post-it e etiquetas */
+  --postit-largura: min(82vw, 21rem);
+  --postit-respiro: clamp(0.9rem, 3.6vw, 1.4rem);
+  --postit-luz: 135deg;
+  --nota-escala-entrada: 1.18;
+  --giro-etiqueta: -1.5deg;
+  --giro-cartao: -1.2deg;
+  --notas-cabecalho: 3.25rem;
+
+  /* Virada de página */
+  --virada-angulo: -100deg;
+  --virada-perspectiva: 250vw;
+  --sombra-alcance: 60%;
+
+  /* Roleta */
+  --roleta-tamanho: min(86vw, 26rem);
+  --roleta-tamanho-largo: min(44vw, 78vh, 36rem);
+  --roleta-botao: 26%;
+  --roleta-ponteiro: 2rem;
+  --girar-fonte: 0.075;
+  --girar-aperto: 0.94;
+  --cadastro-largura: 30rem;
+  --resultado-largura: 28rem;
+  --roleta-largura-max: 64rem;
+
+  /* Camadas */
+  --z-roleta: 1;
+  --z-abertura: 2;
+  --z-notas: 3;
+  --z-sombra-virada: 4;
+  --z-virando: 5;
+  --z-resultado: 20;
+  --z-confete: 30;
+  --z-erro: 40;
+  --z-notas-topo: 2;
+  --z-notas-escurecer: 3;
+
+  /* Tempos de interface (os coreografados vêm do JS) */
+  --tempo-toque: 150ms;
+  --tempo-aparecer: 400ms;
+  --tempo-pulso: 2.4s;
+  --atraso-aviso-travado: 6s;
+  --curva-saida: cubic-bezier(0.22, 1, 0.36, 1);
+  --curva-pagina: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --curva-colar: cubic-bezier(0.34, 1.56, 0.64, 1);
+}

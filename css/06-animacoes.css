@@ -1,0 +1,117 @@
+/* 06-animacoes.css: keyframes, onde cada animação é ligada e a versão com movimento reduzido.
+   Os tempos --duracao-* chegam do js/00-config.js pelo 08-app.js. */
+
+@keyframes aparecer {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes esmaecer {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes subir-foto {
+  from { opacity: 1; transform: translateY(var(--foto-subida)); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes colar-nota {
+  from { opacity: 0; transform: scale(var(--nota-escala-entrada)); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes surgir-cartao {
+  from { opacity: 0; transform: rotate(var(--giro-cartao)) scale(var(--nota-escala-entrada)); }
+  to { opacity: 1; transform: rotate(var(--giro-cartao)); }
+}
+
+@keyframes pulsar {
+  0%, 100% { opacity: 1; }
+  50% { opacity: var(--pulso-opacidade); }
+}
+
+/* A folha gira pela margem esquerda e some quando fica de lado. */
+@keyframes virar-pagina {
+  from { opacity: 1; transform: perspective(var(--virada-perspectiva)) rotateY(0deg); }
+  70% { opacity: 1; }
+  to { opacity: 0; transform: perspective(var(--virada-perspectiva)) rotateY(var(--virada-angulo)); }
+}
+
+@keyframes sombra-virada {
+  0% { opacity: 0; }
+  40% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ---------- Abertura ---------- */
+.mural__celula--visivel {
+  animation: subir-foto var(--duracao-foto) var(--curva-saida) both;
+}
+
+/* ---------- Notas ---------- */
+.postit__papel {
+  animation: colar-nota var(--duracao-nota) var(--curva-colar) both;
+}
+
+.notas__instrucao {
+  animation: pulsar var(--tempo-pulso) ease-in-out infinite;
+}
+
+.notas__instrucao,
+.notas__contador {
+  transition: opacity var(--tempo-aparecer) ease;
+}
+
+/* ---------- Transição: bem diferente da colagem das notas ---------- */
+[data-etapa="transicao"] .etapa--notas {
+  animation: virar-pagina var(--duracao-virada) var(--curva-pagina) both;
+}
+
+[data-etapa="transicao"] .etapa--notas::after {
+  animation: aparecer var(--duracao-virada) var(--curva-pagina) both;
+}
+
+[data-etapa="transicao"] .transicao__sombra {
+  animation: sombra-virada var(--duracao-virada) var(--curva-pagina) both;
+}
+
+/* ---------- Roleta: o conteúdo aparece depois que a página virou ---------- */
+.roleta__conteudo {
+  opacity: 0;
+  transition: opacity var(--tempo-aparecer) ease;
+}
+
+[data-etapa="roleta"] .roleta__conteudo {
+  opacity: 1;
+}
+
+.resultado__cartao {
+  animation: surgir-cartao var(--duracao-nota) var(--curva-colar) both;
+}
+
+/* ---------- Movimento reduzido: troca deslocamento por fade, sem tirar nenhuma etapa ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .mural__celula--visivel,
+  .postit__papel,
+  .resultado__cartao {
+    animation-name: aparecer;
+  }
+
+  .notas__instrucao {
+    animation: none;
+  }
+
+  [data-etapa="transicao"] .etapa--notas {
+    animation: esmaecer var(--duracao-virada-reduzida) ease both;
+  }
+
+  [data-etapa="transicao"] .etapa--notas::after,
+  [data-etapa="transicao"] .transicao__sombra {
+    animation: none;
+  }
+
+  .botao {
+    transition: none;
+  }
+}
