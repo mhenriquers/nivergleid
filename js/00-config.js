@@ -29,11 +29,11 @@
     },
 
     ABERTURA: {
-      DURACAO_TOTAL_MS: 7500, // a especificação pede entre 6 e 10 segundos
+      DURACAO_TOTAL_MS: 17500, // a especificação pede entre 6 e 10 segundos
       DURACAO_MIN_MS: 6000,
-      DURACAO_MAX_MS: 10000,
+      DURACAO_MAX_MS: 17000,
       ATRASO_INICIAL_MS: 400, // o título aparece sozinho antes da primeira foto
-      ENTRADA_FOTO_MS: 900,
+      ENTRADA_FOTO_MS: 1000,
       PAUSA_FINAL_MS: 1300, // mural completo parado antes de seguir
       ROTACAO_MIN_GRAUS: 4, // toda foto fica visivelmente inclinada, alternando o lado
       ROTACAO_MAX_GRAUS: 12,
