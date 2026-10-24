@@ -29,12 +29,12 @@
     },
 
     ABERTURA: {
-      DURACAO_TOTAL_MS: 17500, // a especificação pede entre 6 e 10 segundos
-      DURACAO_MIN_MS: 6000,
-      DURACAO_MAX_MS: 17000,
+      // Tempo de leitura: quanto cada foto fica por cima antes da próxima começar a subir.
+      // A abertura dura o que as fotos precisarem (com 7 fotos e 4500 ms, uns 31 s).
+      TEMPO_POR_FOTO_MS: 4500,
       ATRASO_INICIAL_MS: 400, // o título aparece sozinho antes da primeira foto
-      ENTRADA_FOTO_MS: 1000,
-      PAUSA_FINAL_MS: 1300, // mural completo parado antes de seguir
+      ENTRADA_FOTO_MS: 1400, // subida de cada foto, suave para dar para acompanhar
+      PAUSA_FINAL_MS: 2500, // colagem completa parada antes de seguir
       ROTACAO_MIN_GRAUS: 4, // toda foto fica visivelmente inclinada, alternando o lado
       ROTACAO_MAX_GRAUS: 12,
       DESVIO_MAX: 0.3, // quanto, em fração da região, a foto pode fugir do centro da região dela

@@ -16,10 +16,10 @@
     mural = secao.querySelector('[data-mural]');
     mural.textContent = '';
     const arquivos = U.ordenarAlfabetico(C.FOTOS.ARQUIVOS);
-    const total = U.limitar(A.DURACAO_TOTAL_MS, A.DURACAO_MIN_MS, A.DURACAO_MAX_MS);
-    // As entradas se espalham no tempo que sobra depois da última subida e da pausa final.
-    const janela = Math.max(0, total - A.ATRASO_INICIAL_MS - A.ENTRADA_FOTO_MS - A.PAUSA_FINAL_MS);
-    const intervalo = arquivos.length > 1 ? janela / (arquivos.length - 1) : 0;
+    // Cada foto ganha o mesmo tempo de leitura; a etapa dura o que as fotos precisarem.
+    const intervalo = A.TEMPO_POR_FOTO_MS;
+    const total = A.ATRASO_INICIAL_MS + Math.max(0, arquivos.length - 1) * intervalo +
+      A.ENTRADA_FOTO_MS + A.PAUSA_FINAL_MS;
 
     fotos = arquivos.map((arquivo, indice) => criarFoto(arquivo, indice, arquivos.length));
     // As fotos entram em ordem alfabética, mas cada uma cai numa região sorteada da tela.
