@@ -3,7 +3,7 @@
 (function (DR30) {
   'use strict';
 
-  const MODULOS = ['Config', 'Utils', 'Estado', 'Abertura', 'Notas', 'Transicao', 'RoletaDisco', 'RoletaCadastro', 'Roleta', 'Confetti'];
+  const MODULOS = ['Config', 'Utils', 'Estado', 'AberturaColagem', 'Abertura', 'Notas', 'Transicao', 'RoletaDisco', 'RoletaCadastro', 'Roleta', 'Confetti'];
   const MODULO_DA_ETAPA = { abertura: 'Abertura', notas: 'Notas', transicao: 'Transicao', roleta: 'Roleta' };
   // Sem o 00-config.js não há textos, então o aviso de reserva fica aqui mesmo.
   const TEXTO_RESERVA = 'A página não conseguiu abrir direito. Recarregue para tentar de novo.';

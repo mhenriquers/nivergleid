@@ -19,6 +19,28 @@
   opacity: 0;
 }
 
+/* Um toque traz a próxima foto: mesmo cuidado de toque rápido das notas. */
+.etapa--abertura {
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.abertura__instrucao {
+  flex: none;
+  margin-top: var(--espaco-2);
+  padding: var(--espaco-1) var(--espaco-4);
+  background-color: var(--cor-fita);
+  box-shadow: var(--sombra-fita);
+  font-family: var(--fonte-manuscrita);
+  font-size: var(--texto-m);
+  font-weight: 700;
+  transform: rotate(var(--giro-etiqueta));
+  pointer-events: none;
+}
+
 /* Foto que não carregou some sem empurrar as outras de lugar. */
 .mural__celula--vazia {
   visibility: hidden;

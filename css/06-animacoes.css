@@ -54,7 +54,8 @@
   animation: colar-nota var(--duracao-nota) var(--curva-colar) both;
 }
 
-.notas__instrucao {
+.notas__instrucao,
+.abertura__instrucao {
   animation: pulsar var(--tempo-pulso) ease-in-out infinite;
 }
 
@@ -104,7 +105,8 @@
     transition: none;
   }
 
-  .notas__instrucao {
+  .notas__instrucao,
+  .abertura__instrucao {
     animation: none;
   }
 

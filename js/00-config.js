@@ -32,6 +32,7 @@
       // Tempo de leitura: quanto cada foto fica por cima antes da próxima começar a subir.
       // A abertura dura o que as fotos precisarem (com 7 fotos e 4500 ms, uns 31 s).
       TEMPO_POR_FOTO_MS: 4500,
+      TRAVA_TOQUE_MS: 250, // um toque adianta uma foto só, mesmo com dois dedos ou toque duplo
       ATRASO_INICIAL_MS: 400, // o título aparece sozinho antes da primeira foto
       ENTRADA_FOTO_MS: 1400, // subida de cada foto, suave para dar para acompanhar
       PAUSA_FINAL_MS: 2500, // colagem completa parada antes de seguir

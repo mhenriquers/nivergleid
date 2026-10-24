@@ -1,37 +1,79 @@
-// Etapa 1: as fotos sobem uma a uma e se espalham pela tela como uma colagem,
-// e a etapa termina sozinha. Não tem botão de pular: quem decide o fim é o tempo configurado.
+// Etapa 1: as fotos sobem uma a uma e se espalham pela tela como uma colagem.
+// Sozinha, cada foto espera o tempo de leitura; um toque traz a próxima antes da hora
+// e, depois da última, leva direto para as notas.
 (function (DR30) {
   'use strict';
 
   const C = DR30.Config;
   const U = DR30.Utils;
+  const TECLAS = ['Enter', ' ', 'Spacebar', 'ArrowRight'];
+  // Celular sem Pointer Events (iOS antigo) cai no touchstart, que também não espera o "click".
+  const EVENTO_TOQUE = window.PointerEvent ? 'pointerdown' : 'touchstart';
+  let secao = null;
   let mural = null;
   let fotos = [];
-  let timers = [];
+  let proxima = 0; // índice da próxima foto a subir
+  let timerProxima = 0;
+  let ultimoToque = -Infinity;
   let quadroPendente = 0;
   let area = null; // grade e tamanho máximo de foto calculados para a tela atual
 
-  function iniciar(secao) {
-    const A = C.ABERTURA;
+  function iniciar(elemento) {
+    secao = elemento;
     mural = secao.querySelector('[data-mural]');
     mural.textContent = '';
     const arquivos = U.ordenarAlfabetico(C.FOTOS.ARQUIVOS);
-    // Cada foto ganha o mesmo tempo de leitura; a etapa dura o que as fotos precisarem.
-    const intervalo = A.TEMPO_POR_FOTO_MS;
-    const total = A.ATRASO_INICIAL_MS + Math.max(0, arquivos.length - 1) * intervalo +
-      A.ENTRADA_FOTO_MS + A.PAUSA_FINAL_MS;
-
     fotos = arquivos.map((arquivo, indice) => criarFoto(arquivo, indice, arquivos.length));
     // As fotos entram em ordem alfabética, mas cada uma cai numa região sorteada da tela.
     U.embaralhar(fotos.map((foto, indice) => indice)).forEach((lugar, indice) => {
       fotos[indice].lugar = lugar;
     });
+    proxima = 0;
     distribuir();
-    fotos.forEach((foto, indice) => {
-      agendar(() => liberar(foto), A.ATRASO_INICIAL_MS + indice * intervalo);
-    });
+    secao.addEventListener(EVENTO_TOQUE, aoTocar);
+    document.addEventListener('keydown', aoTeclar);
     window.addEventListener('resize', aoRedimensionar);
-    agendar(() => DR30.App.concluir('abertura'), total);
+    agendarProxima(C.ABERTURA.ATRASO_INICIAL_MS);
+  }
+
+  function agendarProxima(atraso) {
+    window.clearTimeout(timerProxima);
+    timerProxima = window.setTimeout(avancar, atraso);
+  }
+
+  // Sobe a próxima foto e marca a vez da seguinte; depois da última, passa para as notas.
+  function avancar() {
+    const A = C.ABERTURA;
+    if (proxima >= fotos.length) {
+      DR30.App.concluir('abertura');
+      return;
+    }
+    liberar(fotos[proxima]);
+    proxima += 1;
+    const ultima = proxima === fotos.length;
+    agendarProxima(ultima ? A.ENTRADA_FOTO_MS + A.PAUSA_FINAL_MS : A.TEMPO_POR_FOTO_MS);
+  }
+
+  function aoTocar(evento) {
+    if (evento.pointerType === 'mouse' && evento.button !== 0) return;
+    adiantar();
+  }
+
+  // Teclado ajuda no notebook ligado na TV: espaço, enter ou seta para a direita.
+  function aoTeclar(evento) {
+    const alvo = evento.target;
+    const emControle = alvo && alvo.closest && alvo.closest('button, input, a');
+    if (evento.repeat || emControle || TECLAS.indexOf(evento.key) === -1) return;
+    evento.preventDefault();
+    adiantar();
+  }
+
+  // A trava impede que um toque só (ou dois dedos juntos) pule duas fotos de uma vez.
+  function adiantar() {
+    const agora = window.performance.now();
+    if (agora - ultimoToque < C.ABERTURA.TRAVA_TOQUE_MS) return;
+    ultimoToque = agora;
+    avancar();
   }
 
   function criarFoto(arquivo, indice, total) {
@@ -76,7 +118,7 @@
     }
     // O navegador já devolve o tamanho com a orientação da foto aplicada (deitada ou em pé).
     foto.proporcao = imagem.naturalWidth / imagem.naturalHeight;
-    posicionar(foto);
+    if (area) DR30.AberturaColagem.posicionar(area, foto);
     const marcarPronta = () => {
       foto.pronta = true;
       mostrarSePuder(foto);
@@ -104,74 +146,22 @@
     foto.celula.classList.add('mural__celula--vazia');
   }
 
-  // Divide a área em regiões (uma por foto); cada foto fica perto do centro da sua,
-  // maior que a região, formando uma colagem que cobre a tela toda.
+  // Tamanho e posição de cada foto vêm do 03-abertura-colagem.js.
   function distribuir() {
     quadroPendente = 0;
     if (!mural || !fotos.length) return;
-    const estilo = window.getComputedStyle(document.documentElement);
-    const borda = {
-      lado: parseFloat(estilo.getPropertyValue('--foto-borda')) || 0,
-      base: parseFloat(estilo.getPropertyValue('--foto-borda-base')) || 0
-    };
-    const largura = mural.clientWidth;
-    const altura = mural.clientHeight;
-    const grade = U.melhorGrade(fotos.length, largura, altura, proporcaoDaMoldura(C.FOTOS.PROPORCAO_PADRAO, borda));
-    area = {
-      largura,
-      altura,
-      borda,
-      grade,
-      caixaX: grade.largura * C.ABERTURA.ESCALA_FOTO,
-      caixaY: grade.altura * C.ABERTURA.ESCALA_FOTO
-    };
-    fotos.forEach(posicionar);
-  }
-
-  // A borda branca é mais grossa embaixo; a moldura soma a foto e as bordas.
-  function proporcaoDaMoldura(proporcaoFoto, borda) {
-    return 1 / ((1 - 2 * borda.lado) / proporcaoFoto + borda.lado + borda.base);
-  }
-
-  function posicionar(foto) {
-    if (!area) return;
-    const { grade, borda } = area;
-    const proporcao = proporcaoDaMoldura(foto.proporcao, borda);
-    // Cabe na caixa da região e, girada, cabe inteira na área.
-    let larguraFoto = Math.min(area.caixaX, area.caixaY * proporcao);
-    const girada = U.caixaGirada(larguraFoto, larguraFoto / proporcao, foto.giro);
-    larguraFoto *= Math.min(1, area.largura / girada.largura, area.altura / girada.altura);
-    const alturaFoto = larguraFoto / proporcao;
-
-    const regiaoX = area.largura / grade.colunas;
-    const regiaoY = area.altura / grade.linhas;
-    const linha = Math.floor(foto.lugar / grade.colunas);
-    const coluna = foto.lugar % grade.colunas;
-    // Última linha incompleta fica centralizada, sem deixar um canto vazio.
-    const naLinha = Math.min(grade.colunas, fotos.length - linha * grade.colunas);
-    const recuo = ((grade.colunas - naLinha) * regiaoX) / 2;
-    const caixa = U.caixaGirada(larguraFoto, alturaFoto, foto.giro);
-    const x = U.limitar(recuo + (coluna + 1 / 2 + foto.desvioX) * regiaoX, caixa.largura / 2, area.largura - caixa.largura / 2);
-    const y = U.limitar((linha + 1 / 2 + foto.desvioY) * regiaoY, caixa.altura / 2, area.altura - caixa.altura / 2);
-
-    const s = foto.celula.style;
-    s.setProperty('--foto-largura', larguraFoto + 'px');
-    s.setProperty('--foto-altura', alturaFoto + 'px');
-    s.left = x - larguraFoto / 2 + 'px';
-    s.top = y - alturaFoto / 2 + 'px';
+    area = DR30.AberturaColagem.medir(mural, fotos.length);
+    fotos.forEach((foto) => DR30.AberturaColagem.posicionar(area, foto));
   }
 
   function aoRedimensionar() {
     if (!quadroPendente) quadroPendente = window.requestAnimationFrame(distribuir);
   }
 
-  function agendar(funcao, atraso) {
-    timers.push(window.setTimeout(funcao, atraso));
-  }
-
   function encerrar() {
-    timers.forEach((timer) => window.clearTimeout(timer));
-    timers = [];
+    window.clearTimeout(timerProxima);
+    if (secao) secao.removeEventListener(EVENTO_TOQUE, aoTocar);
+    document.removeEventListener('keydown', aoTeclar);
     window.removeEventListener('resize', aoRedimensionar);
     window.cancelAnimationFrame(quadroPendente);
     quadroPendente = 0;

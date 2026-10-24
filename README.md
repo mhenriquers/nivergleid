@@ -41,7 +41,8 @@ css/06-animacoes.css  keyframes e versão com movimento reduzido
 js/00-config.js       constantes (tempos, limites, paleta, textos, fotos)
 js/01-utils.js        funções puras (sorteio, ângulo, grade, validação)
 js/02-state.js        estado único da aplicação
-js/03-abertura.js     etapa 1
+js/03-abertura-colagem.js tamanho e posição das fotos na colagem
+js/03-abertura.js     etapa 1: ritmo das fotos e toque para adiantar
 js/04-notas.js        etapa 2 (lê o NOTAS do notas.js da raiz)
 js/05-transicao.js    etapa 3
 js/06-roleta-disco.js desenho da roleta em canvas
